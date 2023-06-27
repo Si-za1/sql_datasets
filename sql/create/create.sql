@@ -1,7 +1,7 @@
 -- Drop existing tables
--- DROP TABLE IF EXISTS sales;
--- DROP TABLE IF EXISTS menu;
--- DROP TABLE IF EXISTS members;
+DROP TABLE IF EXISTS sales;
+DROP TABLE IF EXISTS menu;
+DROP TABLE IF EXISTS members;
 
 -- Create the members table
 CREATE TABLE IF NOT EXISTS members 

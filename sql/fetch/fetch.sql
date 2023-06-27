@@ -1,7 +1,6 @@
 -- queries for fetching the data 
 -- total amount spent by each customer 
 
-
 SELECT m.customer_id, SUM(o.price) AS total_spent 
 FROM members m 
 JOIN sales s ON m.customer_id = s.customer_id
@@ -46,13 +45,17 @@ HAVING MIN(sales.order_date) = (
 -- LIMIT 1;
 
 SELECT menu.product_name AS most_purchased_item, COUNT(*) AS purchase_count
-FROM (
-	SELECT TOP 1 
-	FROM sales
-	JOIN menu ON sales.product_id = menu.product_id
-	 ) as m
-
-GROUP BY  menu.product_name
+FROM sales
+JOIN menu ON sales.product_id = menu.product_id
+GROUP BY menu.product_name
+HAVING COUNT(*) = (
+    SELECT MAX(purchase_count)
+    FROM (
+        SELECT COUNT(*) AS purchase_count
+        FROM sales
+        GROUP BY product_id
+    ) AS counts
+)
 ORDER BY purchase_count DESC;
 
 
