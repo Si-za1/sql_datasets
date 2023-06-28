@@ -23,16 +23,15 @@ GROUP BY customer_id;
 -- WHERE m.customer_id = 'A'
 -- GROUP BY m.customer_id, menu.product_name;
 
-SELECT menu.product_name, MIN(sales.order_date) AS first_purchase_date
-FROM sales
-JOIN menu ON sales.product_id = menu.product_id
-WHERE sales.customer_id = 'A'
-GROUP BY menu.product_name
-HAVING MIN(sales.order_date) = (
-    SELECT MIN(order_date)
+    SELECT menu.product_name, sales.order_date AS first_purchase_date
     FROM sales
-    WHERE customer_id = 'A'
-)
+    JOIN menu ON sales.product_id = menu.product_id
+    WHERE sales.customer_id = 'A'
+    AND sales.order_date = (
+        SELECT MIN(order_date)
+        FROM sales
+        WHERE customer_id = 'A'
+    );
 
 
 -- What is the most purchased item on the menu and how many times purchased 
@@ -44,19 +43,19 @@ HAVING MIN(sales.order_date) = (
 -- ORDER BY purchase_count DESC
 -- LIMIT 1;
 
-SELECT menu.product_name AS most_purchased_item, COUNT(*) AS purchase_count
-FROM sales
-JOIN menu ON sales.product_id = menu.product_id
-GROUP BY menu.product_name
-HAVING COUNT(*) = (
-    SELECT MAX(purchase_count)
-    FROM (
-        SELECT COUNT(*) AS purchase_count
-        FROM sales
-        GROUP BY product_id
-    ) AS counts
-)
-ORDER BY purchase_count DESC;
+    SELECT menu.product_name AS most_purchased_item, COUNT(*) AS purchase_count
+    FROM sales
+    JOIN menu ON sales.product_id = menu.product_id
+    GROUP BY menu.product_name
+    HAVING COUNT(*) = (
+        SELECT MAX(purchase_count)
+        FROM (
+            SELECT COUNT(*) AS purchase_count
+            FROM sales
+            GROUP BY product_id
+        ) AS counts
+    )
+    ORDER BY purchase_count DESC;
 
 
 

@@ -3,6 +3,7 @@ from config import (
     DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USERNAME
 )
 
+
 class Connection:
     def __init__(self):
         self.db_connection = None
@@ -30,51 +31,22 @@ class Connection:
         except psycopg2.Error as error:
             print("Error while connecting to Postgres:", error)
 
-    def create_sql_from_file(self, filename):
+    def execute_query(self, query):
         try:
-            with open(filename, "r") as create_sql_file:
-                create_sql = create_sql_file.read()
-                self.db_cursor.execute(create_sql)
-                self.db_connection.commit()
-                print("Tables created successfully!")
-
-        except FileNotFoundError:
-            print(f"'{filename}' is not found")
-
-    def insert_sql_from_file(self, filename):
-        try:
-            with open(filename, "r") as insert_sql_file:
-                insert_sql = insert_sql_file.read()
-                self.db_cursor.execute(insert_sql)
-                self.db_connection.commit()
-                print("Values inserted successfully!")
-        except FileNotFoundError:
-            print(f"'{filename}' was not found")
+            self.db_cursor.execute(query)
+            self.db_connection.commit()
+            print("Query executed successfully!")
         except psycopg2.Error as error:
             print("Error executing SQL query:", error)
 
-    def fetch_data_from_file(self, filename):
+    def fetch_data(self, query):
         try:
-            with open(filename, "r") as fetch_sql_file:
-                fetch_sql = fetch_sql_file.read()
-                queries = fetch_sql.split(';')
-
-                for query in queries:
-                    # Execute query if it is not empty
-                    if query.strip():
-                        cursor = self.db_connection.cursor()  # Get the cursor
-                        try:
-                            cursor.execute(query)  # Execute the query
-                            # Print the query
-                            print("Answers for each query:")
-                            for row in cursor:
-                                print(row)
-                                print("\n")
-                        except psycopg2.Error as error:
-                            print("Error executing SQL query:", error)
-        except FileNotFoundError:
-            print(f"SQL file '{filename}' not found.")
-
+            self.db_cursor.execute(query)
+            rows = self.db_cursor.fetchall()
+            return rows
+        except psycopg2.Error as error:
+            print("Error executing SQL query:", error)
+            return []
 
     def disconnect(self):
         if self.db_cursor:
@@ -82,3 +54,48 @@ class Connection:
         if self.db_connection:
             self.db_connection.close()
         print("Disconnected from Postgres")
+
+
+
+
+
+# def create_tables(connection, filename):
+#     sql = read_file(filename)
+#     if sql:
+#         connection.execute_query(sql)
+
+
+# def insert_values(connection, filename):
+#     sql = read_file(filename)
+#     if sql:
+#         connection.execute_query(sql)
+
+
+# def execute_queries(connection, filename):
+#     sql = read_file(filename)
+#     if sql:
+#         queries = sql.split(';')
+#         try:
+#             for query in queries:
+#                 if query.strip():
+#                     connection.execute_query(query)
+#             print("All queries executed successfully!")
+#         except psycopg2.Error as error:
+#             connection.db_connection.rollback()  # Roll back the transaction
+#             print("Error executing SQL query:", error)
+
+
+# def fetch_data(connection, filename):
+#     sql = read_file(filename)
+#     if sql:
+#         queries = sql.split(';')
+#         for query in queries:
+#             if query.strip():
+#                 rows = connection.fetch_data(query)
+#                 print("Answers for each query:")
+#                 for row in rows:
+#                     print(row)
+#                     print("\n")
+
+
+

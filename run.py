@@ -1,23 +1,36 @@
 from database.connection import Connection
 
-def read_file():
-    # Implement your code to read the file here
-    pass
+def read_file(filename):
+    try:
+        with open(filename, "r") as file:
+            return file.read()
+    except FileNotFoundError:
+        print(f"File '{filename}' not found.")
+        return ""
 
 # Creating an instance of Connection
-with Connection() as datab_connection:
+with Connection() as connection:
     # Connecting to the database
     # This step is handled automatically when using the context manager
     
-    # Create SQL
-    datab_connection.create_sql_from_file("sql\create\create.sql")
+    # Read the SQL files
+    create_tables_sql = read_file("sql\create\create.sql")
+    insert_values_sql = read_file("sql\insert\insert.sql")
+    insert_values1_sql= read_file("sql\insert\sales.sql")
+    fetch_data_sql = read_file("sql/fetch/fetch.sql")
+    
+    # Create tables
+    if create_tables_sql:
+        connection.execute_query(create_tables_sql)
     
     # Insert values
-    datab_connection.insert_sql_from_file("sql/insert/insert.sql")
-    datab_connection.insert_sql_from_file("sql/insert/sales.sql")
+    if insert_values_sql:
+        connection.execute_query(insert_values_sql)
+        connection.execute_query(insert_values1_sql)
     
     # Fetch data
-    datab_connection.fetch_data_from_file("sql/fetch/fetch.sql")
+    if fetch_data_sql:
+        connection.fetch_data(fetch_data_sql)
     
 # Disconnect from the database
 # This step is handled automatically when exiting the context manager

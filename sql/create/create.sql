@@ -1,7 +1,7 @@
 -- Drop existing tables
-DROP TABLE IF EXISTS sales;
-DROP TABLE IF EXISTS menu;
-DROP TABLE IF EXISTS members;
+TRUNCATE TABLE  sales CASCADE;
+TRUNCATE TABLE  menu CASCADE;
+TRUNCATE TABLE  members CASCADE;
 
 -- Create the members table
 CREATE TABLE IF NOT EXISTS members 
