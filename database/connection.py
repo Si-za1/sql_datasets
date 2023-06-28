@@ -16,6 +16,7 @@ class Connection:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.disconnect()
 
+    @staticmethod
     def connect(self):
         try:
             self.db_connection = psycopg2.connect(
@@ -47,7 +48,8 @@ class Connection:
         except psycopg2.Error as error:
             print("Error executing SQL query:", error)
             return []
-
+    
+    @staticmethod
     def disconnect(self):
         if self.db_cursor:
             self.db_cursor.close()
